@@ -1,0 +1,19 @@
+{
+  "name": "hubot-fb",
+  "version": "1.0.0",
+  "description": "A Hubot adapter for Facebook Messenger",
+  "main": "src/hubot-fb.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chen Ye",
+  "license": "ISC",
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "hubot": ">=2.0"
+  },
+  "devDependencies": {
+    "coffee-script": ">=1.2.0"
+  }
+}
