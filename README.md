@@ -8,6 +8,7 @@ A (quick and dirty) [Hubot](https://hubot.github.com) adapter for the [Facebook 
 - Install hubot-fb into your Hubot instance using by running ```npm -save install hubot-fb``` in your Hubot's root.  
 
 ## Setup
+- Set hubot-fb as your adapter by launching with ```bin/hubot -a fb```. Edit your Procfile to do the same on Heroku.  
 - See [Facebook's quickstart](https://developers.facebook.com/docs/messenger-platform/quickstart) for setup instructions on Facebook's side.
 - You need to set a config/environment variable called ```FB_PAGE_TOKEN``` containing your API token.
 
