@@ -72,7 +72,6 @@ class FBMessenger extends Adapter
                     return
                         
     reply: (envelope, strings...) ->
-        @robot.logger.info "Reply"
         @send envelope, strings
         
     _receiveAPI: (event) ->
@@ -81,7 +80,6 @@ class FBMessenger extends Adapter
             
     _processMessage: (event) ->
         user = @robot.brain.data.users[event.sender.id]
-        @robot.logger.info user
         unless user
             @_getUser event.sender.id, event.recipient.id, (user) ->
                 @receive new TextMessage user, event.message.text
@@ -103,6 +101,9 @@ class FBMessenger extends Adapter
                     self.robot.logger.error body
                     return
                 userData = JSON.parse body
+
+                self.robot.logger.info body
+                self.robot.logger.info userData
                 
                 userData.name = user.first_name
                 userData.room = page
