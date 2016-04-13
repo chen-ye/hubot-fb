@@ -100,9 +100,13 @@ class FBMessenger extends Adapter
                     "#{response.statusCode}. data='#{data}'"
                     self.robot.logger.error body
                     return
-                user = JSON.parse(body)
+                self.robot.logger.info body
+                user = JSON.parse body
+                self.robot.logger.info user
+                
                 user.name = user.first_name
                 user.room = page
+                
                 callback self.robot.brain.userForId(userId, user)
                 
     
