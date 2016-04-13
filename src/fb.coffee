@@ -10,6 +10,7 @@ class FBMessenger extends Adapter
         super
         @robot.logger.info "Constructor"
         @token      = process.env['FB_PAGE_TOKEN']
+        @vtoken      = process.env['VERIFY_TOKEN']
         @maxlength = 320
 
     send: (envelope, strings...) ->
@@ -55,13 +56,16 @@ class FBMessenger extends Adapter
         unless @token
             @emit 'error', new Error 'The environment variable "FB_PAGE_TOKEN" is required.'
             
+        unless @vtoken
+            @emit 'error', new Error 'The environment variable "VERIFY_TOKEN" is required.'
+            
         @robot.http("https://graph.facebook.com/v2.6/me/subscribed_apps")
             .query({access_token:self.token})
             .post() (error, response, body) -> 
                 self.robot.logger.info response + " " + body
         
         @robot.router.get ['/hubot/'], (req, res) ->
-            if req.param('hub.mode') == 'subscribe' and req.param('hub.verify_token') == 'open_the_pod_bay_doors'
+            if req.param('hub.mode') == 'subscribe' and req.param('hub.verify_token') == self.vtoken
                 res.send req.param('hub.challenge')
             else
                 res.send 400
