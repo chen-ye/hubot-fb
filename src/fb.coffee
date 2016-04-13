@@ -15,10 +15,12 @@ class FBMessenger extends Adapter
         @vtoken     = process.env['FB_VERIFY_TOKEN']
         
         @routeURL   = process.env['FB_ROUTE_URL']
-        if typeof @routeURL is undefined then @routeURL = '/hubot/'
+        if typeof @routeURL is undefined
+            @routeURL = '/hubot/'
             
         @sendImages   = process.env['FB_SEND_IMAGES'] === 'true'
-        if typeof @sendImages is undefined then @sendImages = true
+        if typeof @sendImages is undefined
+            @sendImages = true
         
         @messageEndpoint = 'https://graph.facebook.com/v2.6/me/messages'
         @subscriptionEndpoint = 'https://graph.facebook.com/v2.6/me/subscribed_apps'
