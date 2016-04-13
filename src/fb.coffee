@@ -44,7 +44,7 @@ class FBMessenger extends Adapter
         if @sendImages
             mime = Mime.lookup(msg)
 
-            if mime is "image/jpeg" or mime is "image/png"
+            if mime is "image/jpeg" or mime is "image/png" or mime is "image/gif"
                 data.message.attachment = { type: "image", payload: { url: msg }}
             else
                 data.message.text = msg.substring(0,@msg_maxlength)
@@ -82,9 +82,7 @@ class FBMessenger extends Adapter
         @send envelope, strings
         
     _receiveAPI: (event) ->
-        @robot.logger.info event
         if event.message
-            @robot.logger.info event.message.text
             @_processMessage event
             
     _processMessage: (event) ->
