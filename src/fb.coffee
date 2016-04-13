@@ -18,7 +18,7 @@ class FBMessenger extends Adapter
         if typeof @routeURL is undefined
             @routeURL = '/hubot/'
             
-        @sendImages = process.env['FB_SEND_IMAGES'] === 'true'
+        @sendImages = process.env['FB_SEND_IMAGES'] is 'true'
         if typeof @sendImages is undefined
             @sendImages = true
         
@@ -39,7 +39,7 @@ class FBMessenger extends Adapter
         if sendImages
             mime = Mime.lookup(msg)
 
-            if mime === "image/jpeg" or mime === "image/png"
+            if mime is "image/jpeg" or mime is "image/png"
                 data.message.attachment = { type: "template", payload: { url: msg }}
             else
                 data.message.text = msg
