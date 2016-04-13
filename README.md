@@ -76,10 +76,21 @@ robot.hear /getting chilly/i, (res) ->
 
 See Facebook's API reference [here](https://developers.facebook.com/docs/messenger-platform/send-api-reference#guidelines) for further examples of rich messages.
 
-### Responding to Hookbacks and Delivery Notifications
-This adapter emits `hookback` and `delivery` events when hookbacks and delivery notifications (respectively) are triggered, so all you need to do is to register a `robot.on` listener.
+### Events
+Events allow you react to input that Hubot doesn't natively support. This adapter emits `fb_hookback`, `fb_delivery`, `fb_richMsg`, and `fb_richMsg_[ATTACHMENT_TYPE]` events. 
 
-Responding is a bit more manual—here's an example.  
+Register a listener using `robot.on [EVENT_NAME] [CALLBACK]`.
+
+| event name                     | callback object                                                                            | description                                                                                                                                                                |
+|--------------------------------|--------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `fb_hookback`                  | ``` {   event: _object_,   user: _hubot.user_,   room: _string_,   payload: _string_ } ``` | Emitted when a hookback is triggered.                                                                                                                                      |
+| `fb_delivery`                  | ```{,event: _object_,,user: _hubot.user_,,room: _string_}```                               | Emitted when a delivery confirmation is sent.                                                                                                                              |
+| `fb_richMsg`                   | ```{,event: _object_,,user: _hubot.user_,,room: _string_,,attachments:_array_}```          | Emitted when a message with an attachment is sent. Contains all attachments within that message.                                                                           |
+| `fb_richMsg_[ATTACHMENT.TYPE]` | ```{,event: _object_,,user: _hubot.user_,,room: _string_,,attachment:_object_}```          | Emitted when a message with an attachment is sent. Contains a single attachment of type [ATTACHMENT.TYPE], and multiple are emitted in messages with multiple attachments. |
+
+#### `fb_hookback` example
+
+Responding to an event is a bit more manual—here's an example.  
 
 ```
 # You need this to manually compose a Response
@@ -92,15 +103,6 @@ module.exports = (robot) ->
     res = new Response robot, envelope, undefined
     if envelope.payload is "send_ok_face"
       res.send "http://wallpaper.ultradownloads.com.br/275633_Papel-de-Parede-Meme-Okay-Face_1600x1200.jpg"
-```
-
-```
-envelope = {
-  event: event,
-  user: user,
-  room: event.recipient.id,
-  payload: event.postback.payload # If this is a hookback event. See the source code for more info.
-}
 ```
 
 Of course, hookbacks can do anything in your application—not just trigger responses.  
