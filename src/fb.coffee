@@ -88,10 +88,10 @@ class FBMessenger extends Adapter
         else
             @receive new TextMessage user, event.message.text
         
-    _getUser: (id, page, callback) ->
+    _getUser: (userId, page, callback) ->
         self = @
         
-        @robot.http(@apiURL + '/' + id)
+        @robot.http(@apiURL + '/' + userId)
             .query({fields:"first_name,last_name,profile_pic",access_token:self.token})
             .get() (error, response, body) ->
                 if error
@@ -102,14 +102,15 @@ class FBMessenger extends Adapter
                     "#{response.statusCode}. data='#{data}'"
                     self.robot.logger.error body
                     return
-                self.robot.logger.info body
-                user = JSON.parse body
-                self.robot.logger.info user
+                userData = JSON.parse body
                 
-                user.name = user.first_name
-                user.room = page
+                userData.name = user.first_name
+                userData.room = page
                 
-                callback self.robot.brain.userForId(userId, user)
+                user = new User userId, userData
+                self.robot.brain.data.users[userId] = user
+                
+                callback user
                 
     
     run: ->
