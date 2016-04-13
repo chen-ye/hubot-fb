@@ -5,6 +5,7 @@ catch
     {Robot,Adapter,TextMessage,User} = prequire 'hubot'
     
 Mime = require 'mime'
+inspect = require('util').inspect
 
 class FBMessenger extends Adapter
 
@@ -102,7 +103,7 @@ class FBMessenger extends Adapter
             @_processDelivery event, user
             
     _processMessage: (event, user) ->
-        @robot.logger.debug "#{key} #{value}" for key, value of event.message
+        @robot.logger.debug inspect event.message
         @receive new TextMessage user, event.message.text if event.message.text?
             
     _processPostback: (event, user) ->
