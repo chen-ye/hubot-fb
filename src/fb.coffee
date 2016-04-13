@@ -12,7 +12,7 @@ class FBMessenger extends Adapter
         @token      = process.env['FB_PAGE_TOKEN']
 
     send: (envelope, strings...) ->
-        @emit "sending"
+        @emit "sending" + envelope + strings
         @robot.logger.info "Send"
         message = strings.join "\n"
         @sendAPI envelope.room, msg for msg in strings
