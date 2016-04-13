@@ -119,7 +119,7 @@ robot.hear /getting chilly/i, (res) ->
         }
       }
     }
-    res.send "Brr"
+    res.send()
 ```
 
 

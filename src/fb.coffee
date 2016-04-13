@@ -82,8 +82,12 @@ class FBMessenger extends Adapter
         @send envelope, strings
         
     _receiveAPI: (event) ->
-        if event.message
+        if event.message?
             @_processMessage event
+        else if event.postback?
+            @_processPostback event
+        else if event.delivery?
+            @_processDelivery event
             
     _processMessage: (event) ->
         self = @
@@ -94,6 +98,12 @@ class FBMessenger extends Adapter
                 self.receive new TextMessage user, event.message.text
         else
             self.receive new TextMessage user, event.message.text
+            
+    _processPostback: (event) ->
+        @robot.emit "postback", event
+        
+    _processDelivery: (event) ->
+        @robot.emit "delivery", event
         
     _getUser: (userId, page, callback) ->
         self = @
