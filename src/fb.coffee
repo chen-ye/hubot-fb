@@ -102,7 +102,9 @@ class FBMessenger extends Adapter
             @_processDelivery event, user
             
     _processMessage: (event, user) ->
-        @receive new TextMessage user, event.message.text
+        @robot.logger.debug msgpart for msgpart in event.message
+        @robot.logger.debug key for key in event.message.keys()
+        @receive new TextMessage user, event.message.text if event.message.text?
             
     _processPostback: (event, user) ->
         envelope = {
