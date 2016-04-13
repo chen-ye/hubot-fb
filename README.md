@@ -16,6 +16,8 @@ Supported features:
 - [Configure](#configuration) hubot-fb.
 - See [Facebook's quickstart](https://developers.facebook.com/docs/messenger-platform/quickstart) for setup instructions on Facebook's side.
 
+## Warnings
+This adapter will truncate messages longer than 320 characters (the maximum allowed by Facebook's API).  For alternate behavor, use a script like [hubot-chunkify](https://github.com/chen-ye/hubot-chunkify) or [hubot-longtext](https://github.com/ClaudeBot/hubot-longtext)
 
 ## Configuration
 Required variables are in **bold**.
@@ -27,7 +29,8 @@ Required variables are in **bold**.
 | ```FB_ROUTE_URL```        | string  | "/hubot/" | The webhook url hubot-fb monitors for new message events.                                                                                                                                                                                         |
 | ```FB_SEND_IMAGES```      | boolean | true      | Whether or not hubot-fb should automatically convert compatible urls into image attachments                                                                                                                                               |
 
-## Sending Rich Messages (Templates, Images)
+## Use
+### Sending Rich Messages (Templates, Images)
 _Note: If you just want to send images, you can also send a standard image url in your message text with ```FB_SEND_IMAGES``` set to `true`._
 To send rich messages, include in your envelope 
 ``` 
@@ -35,58 +38,6 @@ envelope =
 {
     fb: {
         richMsg: [RICH_MESSAGE]
-    },
-    user[...]
-}
-```
-
-For example,
-``` 
-envelope = 
-{
-    fb: {
-        richMsg: {
-            attachment: {
-                "type": "image",
-                "payload": {
-                    "url":"https://petersapparel.com/img/shirt.png"
-                }
-            }
-        }
-        
-    },
-    user[...]
-}
-```
-
-or
-
-``` 
-envelope = 
-{
-    fb: {
-        richMsg: {
-            attachment: {
-                type: "template",
-                payload: {
-                    template_type: "button",
-                    text: "What do you want to do next?",
-                    buttons: [
-                        {
-                            type: "web_url",
-                            url: "https://petersapparel.parseapp.com",
-                            title: "Show Website"
-                        },
-                        {
-                            type: "postback",
-                            title: "Start Chatting",
-                            payload: [USER_DEFINED_PAYLOAD]
-                        }
-                    ]
-                }
-            }
-        }
-
     },
     user[...]
 }
@@ -125,5 +76,32 @@ robot.hear /getting chilly/i, (res) ->
 
 See Facebook's API reference [here](https://developers.facebook.com/docs/messenger-platform/send-api-reference#guidelines) for further examples of rich messages.
 
-## Warnings
-This adapter will truncate messages longer than 320 characters (the maximum allowed by Facebook's API).  For alternate behavor, use a script like [hubot-chunkify](https://github.com/chen-ye/hubot-chunkify) or [hubot-longtext](https://github.com/ClaudeBot/hubot-longtext)
+### Responding to Hookbacks and Delivery Notifications
+This adapter emits `hookback` and `delivery` events when hookbacks and delivery notifications (respectively) are triggered, so all you need to do is to register a `robot.on` listener.
+
+Responding is a bit more manual—here's an example.  
+
+```
+# You need this to manually compose a Response
+{Response} = require 'hubot'
+
+module.exports = (robot) ->
+
+  # This can exist alongside your other hooks
+  robot.on "postback", (envelope) -> 
+    res = new Response robot, envelope, undefined
+    if envelope.payload is "send_ok_face"
+      res.send "http://wallpaper.ultradownloads.com.br/275633_Papel-de-Parede-Meme-Okay-Face_1600x1200.jpg"
+```
+
+```
+envelope = {
+  event: event,
+  user: user,
+  room: event.recipient.id,
+  payload: event.postback.payload # If this is a hookback event. See the source code for more info.
+}
+```
+
+Of course, hookbacks can do anything in your application—not just trigger responses.  
+
