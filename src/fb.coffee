@@ -3,39 +3,61 @@ try
 catch
     prequire = require('parent-require')
     {Robot,Adapter,TextMessage,User} = prequire 'hubot'
+    
+Mime = require 'mime'
 
 class FBMessenger extends Adapter
 
     constructor: ->
         super
-        @robot.logger.info "Constructor"
+        
         @token      = process.env['FB_PAGE_TOKEN']
-        @vtoken      = process.env['VERIFY_TOKEN']
+        @vtoken     = process.env['VERIFY_TOKEN']
+        
+        @routeURL   = process.env['ROUTE_URL']
+        if typeof @routeURL is undefined then @routeURL = '/hubot/'
+            
+        @sendImages   = process.env['SEND_IMAGES']
+        if typeof @sendImages is undefined then @sendImages = true
+        
+        @messageEndpoint = 'https://graph.facebook.com/v2.6/me/messages'
+        @subscriptionEndpoint = 'https://graph.facebook.com/v2.6/me/subscribed_apps'
+        
         @maxlength = 320
 
-    send: (envelope, strings...) ->
-        @robot.logger.info "Send"
-        message = strings.join "\n"
-        @sendAPI envelope.user.id, msg for msg in strings
+    send: (envelope, strings...) ->        
+        @sendOne envelope.user.id, msg for msg in strings
+            
+    sendOne: (user, msg) ->
+        data = {
+            recipient: {id: user},
+            message: {}
+        }
         
-    sendAPI: (user, msg) ->
+        if sendImages
+            mime = Mime.lookup(msg)
+
+            if mime === "image/jpeg" or mime === "image/png"
+                data.message.attachment = { type: "template", payload: { url: msg }}
+            else
+                data.message.text = msg
+        else
+            data.message.text = msg
+        
+        @sendAPI data
+        
+    sendAPI: (data) ->
         self = @
         
-        data = JSON.stringify({
-            recipient: {id: user},
-            message: {text: msg}
-        })
+        data = JSON.stringify(data)
         
-        @robot.logger.info data
-        
-        @robot.http('https://graph.facebook.com/v2.6/me/messages')
+        @robot.http(@messageEndpoint)
             .query({access_token:self.token})
             .header('Content-Type', 'application/json')
             .post(data) (error, response, body) ->
                     unless response.statusCode in [200, 201]
                         self.robot.logger.error "Send request returned status " +
-                        "#{response.statusCode}. user='#{user}' msg='#{msg}'"
-                        
+                        "#{response.statusCode}. data='#{data}' msg='#{msg}'"
                         self.robot.logger.error body
                     if error
                         self.robot.logger.error 'Error sending message: ', error
@@ -59,23 +81,22 @@ class FBMessenger extends Adapter
         unless @vtoken
             @emit 'error', new Error 'The environment variable "VERIFY_TOKEN" is required.'
             
-        @robot.http("https://graph.facebook.com/v2.6/me/subscribed_apps")
+        @robot.http(@subscriptionEndpoint)
             .query({access_token:self.token})
             .post() (error, response, body) -> 
                 self.robot.logger.info response + " " + body
         
-        @robot.router.get ['/hubot/'], (req, res) ->
+        @robot.router.get [@routeURL], (req, res) ->
             if req.param('hub.mode') == 'subscribe' and req.param('hub.verify_token') == self.vtoken
                 res.send req.param('hub.challenge')
             else
                 res.send 400
                 
-        @robot.router.post ['/hubot/'], (req, res) ->
+        @robot.router.post [@routeURL], (req, res) ->
             messaging_events = req.body.entry[0].messaging
             self.receiveAPI event for event in messaging_events
             res.send 200
         
-        @robot.logger.info "Run"
         @emit "connected"
 
 
