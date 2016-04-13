@@ -27,7 +27,7 @@ class FBMessenger extends Adapter
         @messageEndpoint = 'https://graph.facebook.com/v2.6/me/messages'
         @subscriptionEndpoint = 'https://graph.facebook.com/v2.6/me/subscribed_apps'
         
-        @maxlength = 320
+        @msg_maxlength = 320
 
     send: (envelope, strings...) ->        
         @sendOne envelope.user.id, msg for msg in strings
@@ -44,7 +44,7 @@ class FBMessenger extends Adapter
             if mime is "image/jpeg" or mime is "image/png"
                 data.message.attachment = { type: "image", payload: { url: msg }}
             else
-                data.message.text = msg
+                data.message.text = msg.substring(0,@msg_maxlength)
         else
             data.message.text = msg
         
