@@ -61,7 +61,7 @@ class FBMessenger extends Adapter
             .post(data) (error, response, body) ->
                     unless response.statusCode in [200, 201]
                         self.robot.logger.error "Send request returned status " +
-                        "#{response.statusCode}. data='#{data}' msg='#{msg}'"
+                        "#{response.statusCode}. data='#{data}'"
                         self.robot.logger.error body
                     if error
                         self.robot.logger.error 'Error sending message: ', error
