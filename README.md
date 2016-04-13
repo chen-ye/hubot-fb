@@ -6,8 +6,10 @@ A (quick and dirty) [Hubot](https://hubot.github.com) adapter for the [Facebook 
 Supported features:
 - Token validation and botside autosetup
 - Resolving user profiles (name and profile pictures from ids)
-- Send and receive messages
-- Image attachments
+- Send and receive text messages
+- Send templates and images
+- Receive images, location, and other attachments
+- Template hookbacks
 
 ## Installation
 - For setting up a Hubot instance, [see here](https://hubot.github.com/docs/)
