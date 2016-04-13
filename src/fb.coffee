@@ -18,9 +18,11 @@ class FBMessenger extends Adapter
         if @routeURL is undefined
             @routeURL = '/hubot/'
             
-        @sendImages = process.env['FB_SEND_IMAGES'] is 'true'
-        if @sendImages is undefined
+        _sendImages = process.env['FB_SEND_IMAGES']
+        if _sendImages is undefined
             @sendImages = true
+        else
+            @sendImages = _sendImages is 'true'
         
         @messageEndpoint = 'https://graph.facebook.com/v2.6/me/messages'
         @subscriptionEndpoint = 'https://graph.facebook.com/v2.6/me/subscribed_apps'
@@ -82,8 +84,6 @@ class FBMessenger extends Adapter
             
         unless @vtoken
             @emit 'error', new Error 'The environment variable "FB_VERIFY_TOKEN" is required.'
-            
-        @robot.logger.info @routeURL
             
         @robot.http(@subscriptionEndpoint)
             .query({access_token:self.token})
