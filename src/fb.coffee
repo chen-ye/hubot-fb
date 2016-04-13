@@ -54,7 +54,7 @@ class FBMessenger extends Adapter
                 res.send 400
                 
         @robot.router.post ['/hubot/'], (req, res) ->
-            @emit "received"
+            self.emit "received"
             messaging_events = req.body.entry[0].messaging
             @receive new TextMessage @robot.brain.userForId(event.sender.id), event.message.text for event in messaging_events
             res.send 200
