@@ -12,6 +12,7 @@ class FBMessenger extends Adapter
         @token      = process.env['FB_PAGE_TOKEN']
 
     send: (envelope, strings...) ->
+        @emit "sending"
         @robot.logger.info "Send"
         message = strings.join "\n"
         @sendAPI envelope.room, msg for msg in strings
@@ -20,7 +21,7 @@ class FBMessenger extends Adapter
         self = @
         @robot.http('https://graph.facebook.com/v2.6/me/messages')
             .post(
-                qs: {access_token:token},
+                qs: {access_token:self.token},
                 json: {
                     recipient: {id:user},
                     message: msg,
