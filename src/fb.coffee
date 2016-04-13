@@ -83,6 +83,8 @@ class FBMessenger extends Adapter
         unless @vtoken
             @emit 'error', new Error 'The environment variable "FB_VERIFY_TOKEN" is required.'
             
+        @robot.logger.info @routeURL
+            
         @robot.http(@subscriptionEndpoint)
             .query({access_token:self.token})
             .post() (error, response, body) -> 
