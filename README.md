@@ -99,7 +99,7 @@ Responding to an event is a bit more manual—here's an example.
 module.exports = (robot) ->
 
   # This can exist alongside your other hooks
-  robot.on "postback", (envelope) -> 
+  robot.on "fb_postback", (envelope) -> 
     res = new Response robot, envelope, undefined
     if envelope.payload is "send_ok_face"
       res.send "http://wallpaper.ultradownloads.com.br/275633_Papel-de-Parede-Meme-Okay-Face_1600x1200.jpg"
