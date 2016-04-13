@@ -12,12 +12,12 @@ class FBMessenger extends Adapter
         super
         
         @token      = process.env['FB_PAGE_TOKEN']
-        @vtoken     = process.env['VERIFY_TOKEN']
+        @vtoken     = process.env['FB_VERIFY_TOKEN']
         
-        @routeURL   = process.env['ROUTE_URL']
+        @routeURL   = process.env['FB_ROUTE_URL']
         if typeof @routeURL is undefined then @routeURL = '/hubot/'
             
-        @sendImages   = process.env['SEND_IMAGES']
+        @sendImages   = process.env['FB_SEND_IMAGES'] === 'true'
         if typeof @sendImages is undefined then @sendImages = true
         
         @messageEndpoint = 'https://graph.facebook.com/v2.6/me/messages'
