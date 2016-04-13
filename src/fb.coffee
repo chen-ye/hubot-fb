@@ -109,7 +109,8 @@ class FBMessenger extends Adapter
     _processPostback: (event, user) ->
         envelope = {
             event: event,
-            user: user
+            user: user,
+            room: event.recipient.id,
             payload: event.postback.payload
         }
         
@@ -118,7 +119,8 @@ class FBMessenger extends Adapter
     _processDelivery: (event, user) ->
         envelope = {
             event: event,
-            user: user
+            user: user,
+            room: event.recipient.id
         }
         @robot.emit "delivery", envelope
         
