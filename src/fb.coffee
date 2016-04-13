@@ -12,9 +12,9 @@ class FBMessenger extends Adapter
         @token      = process.env['FB_PAGE_TOKEN']
 
     send: (envelope, strings...) ->
-        @robot.logger.info "Send" + envelope + strings
+        @robot.logger.info "Send" + envelope.user.id
         message = strings.join "\n"
-        @sendAPI envelope.room, msg for msg in strings
+        @sendAPI envelope.user.id, msg for msg in strings
         
     sendAPI: (user, msg) ->
         self = @
@@ -29,9 +29,9 @@ class FBMessenger extends Adapter
                         self.robot.logger.error "Send request returned status " +
                         "#{response.statusCode}. user='#{user}' msg='#{msg}'"
                     if error
-                        self.robot.logger.info 'Error sending message: ', error
+                        self.robot.logger.error 'Error sending message: ', error
                     else if (response.body.error)
-                        self.robot.logger.info 'Error: ', response.body.error
+                        self.robot.logger.error 'Error: ', response.body.error
                         
     reply: (envelope, strings...) ->
         @robot.logger.info "Reply"
