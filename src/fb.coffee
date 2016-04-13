@@ -18,7 +18,7 @@ class FBMessenger extends Adapter
         if typeof @routeURL is undefined
             @routeURL = '/hubot/'
             
-        @sendImages   = process.env['FB_SEND_IMAGES'] === 'true'
+        @sendImages = process.env['FB_SEND_IMAGES'] === 'true'
         if typeof @sendImages is undefined
             @sendImages = true
         
