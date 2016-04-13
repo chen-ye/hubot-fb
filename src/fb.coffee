@@ -24,15 +24,18 @@ class FBMessenger extends Adapter
         else
             @sendImages = _sendImages is 'true'
         
-        @messageEndpoint = 'https://graph.facebook.com/v2.6/me/messages'
-        @subscriptionEndpoint = 'https://graph.facebook.com/v2.6/me/subscribed_apps'
+        @apiURL = 'https://graph.facebook.com/v2.6'
+        @messageEndpoint = @apiURL + '/me/messages'
+        @subscriptionEndpoint = @apiURL + '/me/subscribed_apps'
+        @userProfileEndpoint = @apiURL + '/me/subscribed_apps'
+        
         
         @msg_maxlength = 320
-
+        
     send: (envelope, strings...) ->        
-        @sendOne envelope.user.id, msg for msg in strings
+        @_sendOne envelope.user.id, msg for msg in strings
             
-    sendOne: (user, msg) ->
+    _sendOne: (user, msg) ->
         data = {
             recipient: {id: user},
             message: {}
@@ -48,9 +51,9 @@ class FBMessenger extends Adapter
         else
             data.message.text = msg
         
-        @sendAPI data
+        @_sendAPI data
         
-    sendAPI: (data) ->
+    _sendAPI: (data) ->
         self = @
         
         data = JSON.stringify(data)
@@ -66,14 +69,42 @@ class FBMessenger extends Adapter
                     self.robot.logger.error "Send request returned status " +
                     "#{response.statusCode}. data='#{data}'"
                     self.robot.logger.error body
+                    return
                         
     reply: (envelope, strings...) ->
         @robot.logger.info "Reply"
         @send envelope, strings
         
-    receiveAPI: (event) ->
+    _receiveAPI: (event) ->
         if event.message
-            @receive new TextMessage @robot.brain.userForId(event.sender.id), event.message.text 
+            @_processMessage event
+            
+    _processMessage: (event) ->
+        user = @robot.brain.data.users[event.sender.id]
+        unless user
+            @_getUser event.sender.id, event.recipient.id, (user) ->
+                @receive new TextMessage user, event.message.text
+        @receive new TextMessage user, event.message.text
+        
+    _getUser: (id, page, callback) ->
+        self = @
+        
+        @robot.http(@apiURL + '/' + id)
+            .query({fields:"first_name,last_name,profile_pic",access_token:self.token})
+            .get() (error, response, body) ->
+                if error
+                    self.robot.logger.error 'Error getting user profile: #{error}'
+                    return
+                unless response.statusCode is 200
+                    self.robot.logger.error "Get user profile request returned status " +
+                    "#{response.statusCode}. data='#{data}'"
+                    self.robot.logger.error body
+                    return
+                user = JSON.parse(body)
+                user.name = user.first_name
+                user.room = page
+                callback self.robot.brain.userForId(userId, user)
+                
     
     run: ->
         self = @
@@ -97,7 +128,7 @@ class FBMessenger extends Adapter
                 
         @robot.router.post [@routeURL], (req, res) ->
             messaging_events = req.body.entry[0].messaging
-            self.receiveAPI event for event in messaging_events
+            self._receiveAPI event for event in messaging_events
             res.send 200
         
         @emit "connected"

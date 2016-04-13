@@ -4,7 +4,9 @@
   "description": "A Hubot adapter for Facebook Messenger",
   "keywords": [
     "facebook messenger",
-    "hubot"
+    "hubot",
+    "hubot-scripts",
+    "hubot-adapters"
   ],
   "homepage": "https://github.com/chen-ye/hubot-fb",
   "bugs": {

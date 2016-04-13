@@ -4,6 +4,7 @@
 A (quick and dirty) [Hubot](https://hubot.github.com) adapter for the [Facebook Messenger Platform](https://messengerplatform.fb.com/).
 
 Supported features:
+- Token validation and botside autosetup
 - Send and receive messages
 - Image attachments
 
