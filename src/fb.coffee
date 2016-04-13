@@ -10,6 +10,7 @@ class FBMessenger extends Adapter
         super
         @robot.logger.info "Constructor"
         @token      = process.env['FB_PAGE_TOKEN']
+        @maxlength = 320
 
     send: (envelope, strings...) ->
         @robot.logger.info "Send"
@@ -63,7 +64,7 @@ class FBMessenger extends Adapter
                 
         @robot.router.post ['/hubot/'], (req, res) ->
             messaging_events = req.body.entry[0].messaging
-            self.receive new TextMessage self.robot.brain.userForId(event.sender.id), event.message.text for event in messaging_events
+            self.receive new TextMessage self.robot.brain.userForId(event.sender.id), event.message.text for event in messaging_events when event.message
             res.send 200
         
         @robot.logger.info "Run"
