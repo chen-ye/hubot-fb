@@ -101,11 +101,8 @@ class FBMessenger extends Adapter
                     self.robot.logger.error body
                     return
                 userData = JSON.parse body
-
-                self.robot.logger.info body
-                self.robot.logger.info userData
                 
-                userData.name = user.first_name
+                userData.name = userData.first_name
                 userData.room = page
                 
                 user = new User userId, userData
