@@ -79,12 +79,14 @@ class FBMessenger extends Adapter
             @_processMessage event
             
     _processMessage: (event) ->
+        self = @
+        
         user = @robot.brain.data.users[event.sender.id]
         unless user
             @_getUser event.sender.id, event.recipient.id, (user) ->
-                @receive new TextMessage user, event.message.text
+                self.receive new TextMessage user, event.message.text
         else
-            @receive new TextMessage user, event.message.text
+            self.receive new TextMessage user, event.message.text
         
     _getUser: (userId, page, callback) ->
         self = @

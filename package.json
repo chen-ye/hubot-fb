@@ -1,6 +1,6 @@
 {
   "name": "hubot-fb",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A Hubot adapter for Facebook Messenger",
   "keywords": [
     "facebook messenger",
