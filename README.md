@@ -13,7 +13,7 @@ Supported features:
 - For setting up a Hubot instance, [see here](https://hubot.github.com/docs/)
 - Install hubot-fb into your Hubot instance using by running ```npm install -save hubot-fb``` in your Hubot's root.  
 - Set hubot-fb as your adapter by launching with ```bin/hubot -a fb```. (Edit your Procfile to do the same on Heroku.)
-- Configure hubot-fb (see below).
+- [Configure](#configuration) hubot-fb.
 - See [Facebook's quickstart](https://developers.facebook.com/docs/messenger-platform/quickstart) for setup instructions on Facebook's side.
 
 
@@ -26,6 +26,74 @@ Required variables are in **bold**.
 | **```FB_VERIFY_TOKEN```** | string  | -         | Your [verification token](https://developers.facebook.com/docs/graph-api/webhooks#setup). This is the string your app expects when you modify a webhook subscription at ```https://developers.facebook.com/apps/YOUR APP ID/webhooks/```. |
 | ```FB_ROUTE_URL```        | string  | "/hubot/" | The webhook url hubot-fb monitors for new message events.                                                                                                                                                                                         |
 | ```FB_SEND_IMAGES```      | boolean | true      | Whether or not hubot-fb should automatically convert compatible urls into image attachments                                                                                                                                               |
+
+## Sending Rich Messages (Templates, Images)
+_Note: If you just want to send images, you can also send a standard image url in your message text with ```FB_SEND_IMAGES``` set to `true`._
+To send rich messages, include in your envelope 
+``` 
+envelope = 
+{
+    fb: {
+        richMsg: [RICH_MESSAGE]
+    },
+    user[...]
+}
+```
+
+For example,
+``` 
+envelope = 
+{
+    fb: {
+        richMsg: {
+            attachment: {
+                "type": "image",
+                "payload": {
+                    "url":"https://petersapparel.com/img/shirt.png"
+                }
+            }
+        }
+        
+    },
+    user[...]
+}
+```
+
+or
+
+``` 
+envelope = 
+{
+    fb: {
+        richMsg: {
+            attachment: {
+                type: "template",
+                payload: {
+                    template_type: "button",
+                    text: "What do you want to do next?",
+                    buttons: [
+                        {
+                            type: "web_url",
+                            url: "https://petersapparel.parseapp.com",
+                            title: "Show Website"
+                        },
+                        {
+                            type: "postback",
+                            title: "Start Chatting",
+                            payload: [USER_DEFINED_PAYLOAD]
+                        }
+                    ]
+                }
+            }
+        }
+
+    },
+    user[...]
+}
+```
+
+
+See Facebook's API reference [here](https://developers.facebook.com/docs/messenger-platform/send-api-reference#guidelines) for further examples of rich messages.
 
 ## Warnings
 This adapter will truncate messages longer than 320 characters (the maximum allowed by Facebook's API).  For alternate behavor, use a script like [hubot-chunkify](https://github.com/chen-ye/hubot-chunkify) or [hubot-longtext](https://github.com/ClaudeBot/hubot-longtext)
