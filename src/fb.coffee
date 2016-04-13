@@ -12,19 +12,20 @@ class FBMessenger extends Adapter
         @token      = process.env['FB_PAGE_TOKEN']
 
     send: (envelope, strings...) ->
-        @robot.logger.info "Send" + envelope.user.id
+        @robot.logger.info "Send"
         message = strings.join "\n"
         @sendAPI envelope.user.id, msg for msg in strings
         
     sendAPI: (user, msg) ->
         self = @
         @robot.http('https://graph.facebook.com/v2.6/me/messages')
+            .query({access_token:self.token})
+            .header('Content-Type', 'application/json')
             .post(
-                qs: {access_token:self.token},
-                json: {
+                JSON.stringify({
                     recipient: {id:user},
-                    message: msg,
-                }) (error, response, body) ->
+                    message: msg
+                })) (error, response, body) ->
                     unless response.statusCode in [200, 201]
                         self.robot.logger.error "Send request returned status " +
                         "#{response.statusCode}. user='#{user}' msg='#{msg}'"
@@ -43,7 +44,8 @@ class FBMessenger extends Adapter
         unless @token
             @emit 'error', new Error 'The environment variable "FB_PAGE_TOKEN" is required.'
             
-        @robot.http("https://graph.facebook.com/v2.6/me/subscribed_apps?access_token="+@token)
+        @robot.http("https://graph.facebook.com/v2.6/me/subscribed_apps")
+            .query({access_token:self.token})
             .post() (error, response, body) -> 
                 self.robot.logger.info response + " " + body
         
