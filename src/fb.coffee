@@ -42,7 +42,7 @@ class FBMessenger extends Adapter
             mime = Mime.lookup(msg)
 
             if mime is "image/jpeg" or mime is "image/png"
-                data.message.attachment = { type: "template", payload: { url: msg }}
+                data.message.attachment = { type: "image", payload: { url: msg }}
             else
                 data.message.text = msg
         else
@@ -63,7 +63,7 @@ class FBMessenger extends Adapter
                         self.robot.logger.error "Send request returned status " +
                         "#{response.statusCode}. data='#{data}'"
                         self.robot.logger.error body
-                    if error
+                    else if error
                         self.robot.logger.error 'Error sending message: ', error
                     else if (response.body.error)
                         self.robot.logger.error 'Error: ', response.body.error
