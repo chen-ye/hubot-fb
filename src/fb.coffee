@@ -45,7 +45,7 @@ class FBMessenger extends Adapter
         @robot.logger.info "Reply"
         @send envelope, strings
         
-    recieveAPI: (event) ->
+    receiveAPI: (event) ->
         if event.message
             @receive new TextMessage @robot.brain.userForId(event.sender.id), event.message.text 
     
@@ -68,7 +68,7 @@ class FBMessenger extends Adapter
                 
         @robot.router.post ['/hubot/'], (req, res) ->
             messaging_events = req.body.entry[0].messaging
-            recieveAPI event for event in messaging_events
+            self.receiveAPI event for event in messaging_events
             res.send 200
         
         @robot.logger.info "Run"
