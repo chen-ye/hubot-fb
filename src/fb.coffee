@@ -36,7 +36,7 @@ class FBMessenger extends Adapter
             message: {}
         }
         
-        if sendImages
+        if @sendImages
             mime = Mime.lookup(msg)
 
             if mime is "image/jpeg" or mime is "image/png"
