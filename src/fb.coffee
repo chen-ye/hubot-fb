@@ -45,7 +45,7 @@ class FBMessenger extends Adapter
             
         @robot.http("https://graph.facebook.com/v2.6/me/subscribed_apps?access_token="+@token)
             .post() (error, response, body) -> 
-                @emit response + " " + body
+                self.emit response + " " + body
         
         @robot.router.get ['/hubot/'], (req, res) ->
             if req.param('hub.mode') == 'subscribe' and req.param('hub.verify_token') == 'open_the_pod_bay_doors'
