@@ -59,14 +59,13 @@ class FBMessenger extends Adapter
             .query({access_token:self.token})
             .header('Content-Type', 'application/json')
             .post(data) (error, response, body) ->
-                    unless response.statusCode in [200, 201]
-                        self.robot.logger.error "Send request returned status " +
-                        "#{response.statusCode}. data='#{data}'"
-                        self.robot.logger.error body
-                    else if error
-                        self.robot.logger.error 'Error sending message: ', error
-                    else if (response.body.error)
-                        self.robot.logger.error 'Error: ', response.body.error
+                if error
+                    self.robot.logger.error 'Error sending message: #{error}'
+                    return
+                unless response.statusCode in [200, 201]
+                    self.robot.logger.error "Send request returned status " +
+                    "#{response.statusCode}. data='#{data}'"
+                    self.robot.logger.error body
                         
     reply: (envelope, strings...) ->
         @robot.logger.info "Reply"
