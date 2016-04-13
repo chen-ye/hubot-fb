@@ -82,7 +82,9 @@ class FBMessenger extends Adapter
         @send envelope, strings
         
     _receiveAPI: (event) ->
+        @robot.logger.info event
         if event.message
+            @robot.logger.info event.message.text
             @_processMessage event
             
     _processMessage: (event) ->
