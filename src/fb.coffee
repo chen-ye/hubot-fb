@@ -95,34 +95,43 @@ class FBMessenger extends Adapter
             self._dispatch event, user
             
     _dispatch: (event, user) ->
-        if event.message?
-            @_processMessage event, user
-        else if event.postback?
-            @_processPostback event, user
-        else if event.delivery?
-            @_processDelivery event, user
-            
-    _processMessage: (event, user) ->
-        @robot.logger.debug inspect event.message
-        @receive new TextMessage user, event.message.text if event.message.text?
-            
-    _processPostback: (event, user) ->
-        envelope = {
-            event: event,
-            user: user,
-            room: event.recipient.id,
-            payload: event.postback.payload
-        }
-        
-        @robot.emit "postback", envelope
-        
-    _processDelivery: (event, user) ->
         envelope = {
             event: event,
             user: user,
             room: event.recipient.id
+        }        
+        
+        if event.message?
+            @_processMessage event, envelope
+        else if event.postback?
+            @_processPostback event, envelope
+        else if event.delivery?
+            @_processDelivery event, envelope
+            
+    _processMessage: (event, envelope) ->
+        @robot.logger.debug inspect event.message
+        if event.message.attachments?
+            envelope.attachments = event.message.attachments
+            @robot.emit "fb_richMsg", envelope
+            @_processAttachment event, envelope, attachment for attachment in envelope.attachments
+        if event.message.text?
+            @receive new TextMessage envelope.user, event.message.text
+            
+    _processAttachment: (event, envelope, attachment) ->
+        unique_envelope = {
+            event: event,
+            user: envelope.user,
+            room: envelope.room,
+            attachment: attachment
         }
-        @robot.emit "delivery", envelope
+        @robot.emit "fb_richMsg_#{attachment.type}", unique_envelope
+            
+    _processPostback: (event, envelope) ->
+        envelope.payload = event.postback.payload
+        @robot.emit "fb_postback", envelope
+        
+    _processDelivery: (event, envelope) ->
+        @robot.emit "fb_delivery", envelope
         
     _getUser: (userId, page, callback) ->
         self = @
