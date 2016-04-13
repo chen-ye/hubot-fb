@@ -12,8 +12,7 @@ class FBMessenger extends Adapter
         @token      = process.env['FB_PAGE_TOKEN']
 
     send: (envelope, strings...) ->
-        @emit "sending" + envelope + strings
-        @robot.logger.info "Send"
+        @robot.logger.info "Send" + envelope + strings
         message = strings.join "\n"
         @sendAPI envelope.room, msg for msg in strings
         
@@ -30,9 +29,9 @@ class FBMessenger extends Adapter
                         self.robot.logger.error "Send request returned status " +
                         "#{response.statusCode}. user='#{user}' msg='#{msg}'"
                     if error
-                        console.log 'Error sending message: ', error
+                        self.robot.logger.info 'Error sending message: ', error
                     else if (response.body.error)
-                        console.log 'Error: ', response.body.error
+                        self.robot.logger.info 'Error: ', response.body.error
                         
     reply: (envelope, strings...) ->
         @robot.logger.info "Reply"
@@ -46,7 +45,7 @@ class FBMessenger extends Adapter
             
         @robot.http("https://graph.facebook.com/v2.6/me/subscribed_apps?access_token="+@token)
             .post() (error, response, body) -> 
-                self.emit response + " " + body
+                self.robot.logger.info response + " " + body
         
         @robot.router.get ['/hubot/'], (req, res) ->
             if req.param('hub.mode') == 'subscribe' and req.param('hub.verify_token') == 'open_the_pod_bay_doors'
@@ -55,7 +54,6 @@ class FBMessenger extends Adapter
                 res.send 400
                 
         @robot.router.post ['/hubot/'], (req, res) ->
-            self.emit "received"
             messaging_events = req.body.entry[0].messaging
             self.receive new TextMessage self.robot.brain.userForId(event.sender.id), event.message.text for event in messaging_events
             res.send 200
