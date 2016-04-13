@@ -14,9 +14,7 @@ class FBMessenger extends Adapter
         @token      = process.env['FB_PAGE_TOKEN']
         @vtoken     = process.env['FB_VERIFY_TOKEN']
         
-        @routeURL   = process.env['FB_ROUTE_URL']
-        if @routeURL is undefined
-            @routeURL = '/hubot/'
+        @routeURL   = process.env['FB_ROUTE_URL'] or '/hubot/'
             
         _sendImages = process.env['FB_SEND_IMAGES']
         if _sendImages is undefined
