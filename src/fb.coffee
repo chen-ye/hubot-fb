@@ -82,28 +82,41 @@ class FBMessenger extends Adapter
         @send envelope, strings
         
     _receiveAPI: (event) ->
-        if event.message?
-            @_processMessage event
-        else if event.postback?
-            @_processPostback event
-        else if event.delivery?
-            @_processDelivery event
-            
-    _processMessage: (event) ->
         self = @
-        
+    
         user = @robot.brain.data.users[event.sender.id]
-        unless user
+        unless user?
             @_getUser event.sender.id, event.recipient.id, (user) ->
-                self.receive new TextMessage user, event.message.text
+                self._dispatch event
         else
-            self.receive new TextMessage user, event.message.text
+             self._dispatch event
             
-    _processPostback: (event) ->
-        @robot.emit "postback", event
+    _dispatch: (event, user) ->
+        if event.message?
+            @_processMessage event, user
+        else if event.postback?
+            @_processPostback event, user
+        else if event.delivery?
+            @_processDelivery event, user
+            
+    _processMessage: (event, user) ->
+        @receive new TextMessage user, event.message.text
+            
+    _processPostback: (event, user) ->
+        envelope = {
+            event: event,
+            user: user
+            payload: event.postback.payload
+        }
+        
+        @robot.emit "postback", envelope
         
     _processDelivery: (event) ->
-        @robot.emit "delivery", event
+        envelope = {
+            event: event,
+            user: user
+        }
+        @robot.emit "delivery", envelope
         
     _getUser: (userId, page, callback) ->
         self = @
@@ -155,6 +168,7 @@ class FBMessenger extends Adapter
             self._receiveAPI event for event in messaging_events
             res.send 200
         
+        @robot.logger.info "FB-adapter initialized"
         @emit "connected"
 
 
