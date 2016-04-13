@@ -64,7 +64,7 @@ class FBMessenger extends Adapter
                 
         @robot.router.post ['/hubot/'], (req, res) ->
             messaging_events = req.body.entry[0].messaging
-            self.receive new TextMessage self.robot.brain.userForId(event.sender.id), event.message.text for event in messaging_events when 'message' in object
+            self.receive new TextMessage self.robot.brain.userForId(event.sender.id), event.message.text for event in messaging_events when 'message' in event
             res.send 200
         
         @robot.logger.info "Run"
