@@ -2,13 +2,18 @@
   "name": "hubot-fb",
   "version": "1.0.0",
   "description": "A Hubot adapter for Facebook Messenger",
-  "main": "src/hubot-fb.coffee",
+  "main": "src/fb.coffee",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Chen Ye",
+  "repository" :
+  { "type" : "git"
+   , "url" : "https://github.com/chen-ye/hubot-fb.git"
+  },
   "license": "ISC",
   "dependencies": {
+    "parent-require": "^1.0.0"
   },
   "peerDependencies": {
     "hubot": ">=2.0"
