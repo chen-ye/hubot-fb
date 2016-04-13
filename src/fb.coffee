@@ -18,17 +18,23 @@ class FBMessenger extends Adapter
         
     sendAPI: (user, msg) ->
         self = @
+        
+        data = JSON.stringify({
+            recipient: {id: user},
+            message: {text: msg}
+        })
+        
+        @robot.logger.info data
+        
         @robot.http('https://graph.facebook.com/v2.6/me/messages')
             .query({access_token:self.token})
             .header('Content-Type', 'application/json')
-            .post(
-                JSON.stringify({
-                    recipient: {id:user},
-                    message: msg
-                })) (error, response, body) ->
+            .post(data) (error, response, body) ->
                     unless response.statusCode in [200, 201]
                         self.robot.logger.error "Send request returned status " +
                         "#{response.statusCode}. user='#{user}' msg='#{msg}'"
+                        
+                        self.robot.logger.error body
                     if error
                         self.robot.logger.error 'Error sending message: ', error
                     else if (response.body.error)
