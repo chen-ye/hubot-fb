@@ -12,10 +12,12 @@ A (quick and dirty) [Hubot](https://hubot.github.com) adapter for the [Facebook 
 
 
 ## Configuration
+Required variables are in **bold**.
+
 | config variable           | type    | default   | description                                                                                                                                                            |
 |---------------------------|---------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **```FB_PAGE_TOKEN```**   | string  | -         | Your [page access token](https://developers.facebook.com/docs/facebook-login/access-tokens#pagetokens). You can get one at ```https://developers.facebook.com/apps/[YOUR APP ID]/messenger/```.                                                                |
-| **```FB_VERIFY_TOKEN```** | string  | -         | Your [verification token](https://developers.facebook.com/docs/graph-api/webhooks#setup). This is the string your app expects when you modify a webhook subscription. |
+| **```FB_VERIFY_TOKEN```** | string  | -         | Your [verification token](https://developers.facebook.com/docs/graph-api/webhooks#setup). This is the string your app expects when you modify a webhook subscription at ```https://developers.facebook.com/apps/YOUR APP ID/webhooks/```. |
 | ```FB_ROUTE_URL```        | string  | "/hubot/" | The url hubot-fb monitors for new message events.                                                                                                                      |
 | ```FB_SEND_IMAGES```      | boolean | true      | Whether or not hubot-fb should automatically convert compatible urls into image attachments                                                                            |
 
