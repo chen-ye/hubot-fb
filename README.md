@@ -7,7 +7,7 @@ A [Hubot](https://hubot.github.com) adapter for the [Facebook Messenger Platform
 - Send and receive text messages
 - Send templates and images (jpgs; pngs; animated gifs)
 - Receive images, location, and other attachments
-- Template hookbacks
+- Template postbacks
 
 ## Installation
 - For setting up a Hubot instance, [see here](https://hubot.github.com/docs/)
@@ -77,18 +77,18 @@ robot.hear /getting chilly/i, (res) ->
 See Facebook's API reference [here](https://developers.facebook.com/docs/messenger-platform/send-api-reference#guidelines) for further examples of rich messages.
 
 ### Events
-Events allow you react to input that Hubot doesn't natively support. This adapter emits `fb_hookback`, `fb_delivery`, `fb_richMsg`, and `fb_richMsg_[ATTACHMENT_TYPE]` events. 
+Events allow you react to input that Hubot doesn't natively support. This adapter emits `fb_postback`, `fb_delivery`, `fb_richMsg`, and `fb_richMsg_[ATTACHMENT_TYPE]` events. 
 
 Register a listener using `robot.on [EVENT_NAME] [CALLBACK]`.
 
 | event name                     | callback object                                                                            | description                                                                                                                                                                |
 |--------------------------------|--------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `fb_hookback`                  | ``` { event: msgevent, user: hubot.user, room: string,   payload: string } ``` | Emitted when a hookback is triggered.                                                                                                                                      |
+| `fb_postback`                  | ``` { event: msgevent, user: hubot.user, room: string,   payload: string } ``` | Emitted when a postback is triggered.                                                                                                                                      |
 | `fb_delivery`                  | ```{ event: msgevent, user: hubot.user, room: string }```                               | Emitted when a delivery confirmation is sent.                                                                                                                              |
 | `fb_richMsg`                   | ```{ event: msgevent, user: hubot.user, room: string, attachments: array[msgevent.message.attachment]}```          | Emitted when a message with an attachment is sent. Contains all attachments within that message.                                                                           |
 | `fb_richMsg_[ATTACHMENT.TYPE]` | ```{ event: msgevent, user: hubot.user, room: string, attachment: msgevent.message.attachment}```          | Emitted when a message with an attachment is sent. Contains a single attachment of type [ATTACHMENT.TYPE], and multiple are emitted in messages with multiple attachments. |
 
-#### `fb_hookback` example
+#### `fb_postback` example
 
 Responding to an event is a bit more manual—here's an example.  
 
@@ -105,5 +105,5 @@ module.exports = (robot) ->
       res.send "http://wallpaper.ultradownloads.com.br/275633_Papel-de-Parede-Meme-Okay-Face_1600x1200.jpg"
 ```
 
-Of course, hookbacks can do anything in your application—not just trigger responses.  
+Of course, postbacks can do anything in your application—not just trigger responses.  
 
