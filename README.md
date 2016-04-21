@@ -12,8 +12,8 @@ A [Hubot](https://hubot.github.com) adapter for the [Facebook Messenger Platform
 ## Installation
 - For setting up a Hubot instance, [see here](https://hubot.github.com/docs/)
 - Install hubot-fb into your Hubot instance using by running ```npm install -save hubot-fb``` in your Hubot's root.  
-- Set hubot-fb as your adapter by launching with ```bin/hubot -a fb```. (Edit your Procfile to do the same on Heroku.)
 - [Configure](#configuration) hubot-fb.
+- Set hubot-fb as your adapter by launching with ```bin/hubot -a fb```. (Edit your Procfile to do the same on Heroku.)
 - See [Facebook's quickstart](https://developers.facebook.com/docs/messenger-platform/quickstart) for setup instructions on Facebook's side.
 
 ## Warnings
