@@ -14,10 +14,11 @@
     - Under "Token Generation", select a page, and copy the page access token that is generated:
       
       ![image](https://cloud.githubusercontent.com/assets/1904031/14604243/da3d106e-0572-11e6-822e-ac15322bf94b.png)
+
 ### Setup hubot-fb
 - Install hubot-fb into your Hubot instance using by running `npm install -save hubot-fb` in your Hubot's root.
 - Set your `FB_PAGE_TOKEN` environment variable as the page access token you copied. This will allow your bot to send as your page.
-- __IMPORTANT__: You then need to run 
+- __IMPORTANT__: In your console, run 
 `curl -ik -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=[FB_PAGE_TOKEN]"`. This tells Facebook to forward page messages to your app
 - Pick an alphanumeric string and set it as your `FB_VERIFY_TOKEN`.
 - Launch your hubot instance using hubot-fb by running `bin/hubot -a fb` (edit your Procfile to do the same on a Heroku-hosted instance)
