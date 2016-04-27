@@ -20,19 +20,13 @@
 - __IMPORTANT__: You then need to run 
 `curl -ik -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=[FB_PAGE_TOKEN]"`. This tells Facebook to forward page messages to your app
 - Pick an alphanumeric string and set it as your `FB_VERIFY_TOKEN`.
-
-Launch your hubot instance now.
-
-In your app dashboard, under the webhooks section, click setup webhooks:
-![image](https://cloud.githubusercontent.com/assets/1904031/14604352/68dbc5c2-0573-11e6-9891-cd79b020b642.png).  
-
-You should see a dialog like this: 
-![image](https://cloud.githubusercontent.com/assets/1904031/14604367/859b3e68-0573-11e6-8d6e-96e41663786f.png)
-
-Under "Callback URL", input `[your hubot domain]/hubot/` (for ex, `test-bot.herokuapp.com/hubot/`) (you can customize the route by setting `FB_ROUTE_URL`).  
-
-Under "Verify Token", input the token you set for `FB_VERIFY_TOKEN`.
-
-Check all the boxes under "Subscription Fields" and click "Verify and Save".  This should create webhooks which allow your page to receive Page messages.  
-
+- Launch your hubot instance using hubot-fb by running `bin/hubot -a fb` (edit your Procfile to do the same on a Heroku-hosted instance)
+- In your app dashboard, under the webhooks section, click setup webhooks:
+    ![image](https://cloud.githubusercontent.com/assets/1904031/14604352/68dbc5c2-0573-11e6-9891-cd79b020b642.png).  
+- You should see a dialog like this: 
+    ![image](https://cloud.githubusercontent.com/assets/1904031/14604367/859b3e68-0573-11e6-8d6e-96e41663786f.png)
+- Under "Callback URL", input `[your hubot domain]/hubot/` (eg, `test-bot.herokuapp.com/hubot/`) (you can customize the route by setting `FB_ROUTE_URL`).
+- Under "Verify Token", input the token you set for `FB_VERIFY_TOKEN`.
+- Check all the boxes under "Subscription Fields" and click "Verify and Save". This creates webhooks which allow your page to receive Page messages.  
+- You're now set up to send and recieve messages to your hubot instance from Facebook Messenger.
 
