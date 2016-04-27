@@ -10,11 +10,13 @@ A [Hubot](https://hubot.github.com) adapter for the [Facebook Messenger Platform
 - Template postbacks
 
 ## Installation
+[See detailed installation instructions here.](/INSTALL.md)
 - For setting up a Hubot instance, [see here](https://hubot.github.com/docs/)
-- Install hubot-fb into your Hubot instance using by running ```npm install -save hubot-fb``` in your Hubot's root.  
-- Set hubot-fb as your adapter by launching with ```bin/hubot -a fb```. (Edit your Procfile to do the same on Heroku.)
-- [Configure](#configuration) hubot-fb.
+- Install hubot-fb into your Hubot instance using by running ```npm install -save hubot-fb``` in your Hubot's root.
 - See [Facebook's quickstart](https://developers.facebook.com/docs/messenger-platform/quickstart) for setup instructions on Facebook's side.
+- [Configure](#configuration) hubot-fb.
+- Set hubot-fb as your adapter by launching with ```bin/hubot -a fb```. (Edit your Procfile to do the same on Heroku.)
+
 
 ## Warnings
 This adapter will truncate messages longer than 320 characters (the maximum allowed by Facebook's API).  For alternate behavor, use a script like [hubot-chunkify](https://github.com/chen-ye/hubot-chunkify) or [hubot-longtext](https://github.com/ClaudeBot/hubot-longtext)
