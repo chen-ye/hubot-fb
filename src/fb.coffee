@@ -17,7 +17,7 @@ class FBMessenger extends Adapter
         @app_secret = process.env['FB_APP_SECRET']
 
         @token      = process.env['FB_PAGE_TOKEN']
-        @vtoken     = process.env['FB_VERIFY_TOKEN']
+        @vtoken     = process.env['FB_VERIFY_TOKEN'] or 'hubotfbverification'
         
         @routeURL   = process.env['FB_ROUTE_URL'] or '/fb'
         @webhookURL = process.env['FB_WEBHOOK'] + @routeURL
@@ -190,6 +190,18 @@ class FBMessenger extends Adapter
             
         unless @vtoken
             @emit 'error', new Error 'The environment variable "FB_VERIFY_TOKEN" is required.'
+
+        unless @page_id
+            @emit 'error', new Error 'The environment variable "FB_PAGE_ID" is required.'
+
+        unless @app_id
+            @emit 'error', new Error 'The environment variable "FB_APP_ID" is required.'
+
+        unless @app_secret
+            @emit 'error', new Error 'The environment variable "FB_APP_SECRET" is required.'
+
+        unless process.env['FB_WEBHOOK']
+            @emit 'error', new Error 'The environment variable "FB_WEBHOOK" is required.'
             
         @robot.http(@subscriptionEndpoint)
             .query({access_token:self.token})
