@@ -128,6 +128,10 @@ class FBMessenger extends Adapter
             @robot.logger.info "Reply message to room/message: " + envelope.user.name + "/" + event.message.mid
 
     cleanMessageText: (text, chat_id) ->
+        # if AUTOHEAR is not turned on, don't clean
+        if !process.env['FB_AUTOHEAR']
+            return text
+        
         # If it is a private chat, automatically prepend the bot name if it does not exist already.
         if (chat_id > 0)
             # Strip out the stuff we don't need.
