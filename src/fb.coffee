@@ -12,11 +12,16 @@ class FBMessenger extends Adapter
     constructor: ->
         super
         
+        @page_id    = process.env['FB_PAGE_ID']
+        @app_id     = process.env['FB_APP_ID']
+        @app_secret = process.env['FB_APP_SECRET']
+
         @token      = process.env['FB_PAGE_TOKEN']
         @vtoken     = process.env['FB_VERIFY_TOKEN']
         
-        @routeURL   = process.env['FB_ROUTE_URL'] or '/fb/'
-            
+        @routeURL   = process.env['FB_ROUTE_URL'] or '/fb'
+        @webhookURL = process.env['FB_WEBHOOK'] + @routeURL
+
         _sendImages = process.env['FB_SEND_IMAGES']
         if _sendImages is undefined
             @sendImages = true
@@ -24,10 +29,12 @@ class FBMessenger extends Adapter
             @sendImages = _sendImages is 'true'
         
         @apiURL = 'https://graph.facebook.com/v2.6'
-        @messageEndpoint = @apiURL + '/me/messages'
-        @subscriptionEndpoint = @apiURL + '/me/subscribed_apps'
-        @userProfileEndpoint = @apiURL + '/me/subscribed_apps'
-        
+        @pageURL = @apiURL + '/'+ @page_id
+        @messageEndpoint = @pageURL + '/messages?access_token=' + @token
+        @subscriptionEndpoint = @pageURL + '/subscribed_apps?access_token=' + @token
+        @userProfileEndpoint = @pageURL + '/subscribed_apps?access_token=' + @token
+        @appAccessTokenEndpoint = 'https://graph.facebook.com/oauth/access_token?client_id=' + @app_id + '&client_secret=' + @app_secret + '&grant_type=client_credentials'
+        @setWebhookEndpoint = @pageURL + '/subscriptions'
         
         @msg_maxlength = 320
         
@@ -144,7 +151,7 @@ class FBMessenger extends Adapter
                     return
                 unless response.statusCode is 200
                     self.robot.logger.error "Get user profile request returned status " +
-                    "#{response.statusCode}. data='#{data}'"
+                    "#{response.statusCode}. data='#{body}'"
                     self.robot.logger.error body
                     return
                 userData = JSON.parse body
@@ -170,18 +177,34 @@ class FBMessenger extends Adapter
         @robot.http(@subscriptionEndpoint)
             .query({access_token:self.token})
             .post() (error, response, body) -> 
-                self.robot.logger.info response + " " + body
+                self.robot.logger.info "subcribed app to page: " + body
         
         @robot.router.get [@routeURL], (req, res) ->
             if req.param('hub.mode') == 'subscribe' and req.param('hub.verify_token') == self.vtoken
                 res.send req.param('hub.challenge')
+                self.robot.logger.info "successful webhook verification"
             else
                 res.send 400
                 
         @robot.router.post [@routeURL], (req, res) ->
+            @robot.logger.debug "Received payload: " + JSON.stringify(req.body)
             messaging_events = req.body.entry[0].messaging
             self._receiveAPI event for event in messaging_events
             res.send 200
+
+        @robot.http(@appAccessTokenEndpoint)
+            .get() (error, response, body) -> 
+                self.app_access_token = body.split("=").pop()
+                self.robot.http(self.setWebhookEndpoint)
+                .query(
+                    object: 'page',
+                    callback_url: self.webhookURL
+                    fields: 'messaging_optins, messages, message_deliveries, messaging_postbacks'
+                    verify_token: self.vtoken
+                    access_token: self.app_access_token
+                    )
+                .post() (error2, response2, body2) -> 
+                    self.robot.logger.info "FB webhook set/updated: " + body2
         
         @robot.logger.info "FB-adapter initialized"
         @emit "connected"
