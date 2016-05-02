@@ -22,7 +22,7 @@ class FBMessenger extends Adapter
         @vtoken     = process.env['FB_VERIFY_TOKEN'] or crypto.randomBytes(16).toString('hex')
         
         @routeURL   = process.env['FB_ROUTE_URL'] or '/hubot/fb'
-        @webhookURL = process.env['FB_WEBHOOK'] + @routeURL
+        @webhookURL = process.env['FB_WEBHOOK_BASE'] + @routeURL
 
         _sendImages = process.env['FB_SEND_IMAGES']
         if _sendImages is undefined
@@ -196,16 +196,16 @@ class FBMessenger extends Adapter
             @emit 'error', new Error 'The environment variable "FB_PAGE_TOKEN" is required. See https://github.com/chen-ye/hubot-fb/blob/master/README.md for details.'
 
         unless @page_id
-            @emit 'error', new Error 'The environment variable "FB_PAGE_ID" is required. '
+            @emit 'error', new Error 'The environment variable "FB_PAGE_ID" is required. See https://github.com/chen-ye/hubot-fb/blob/master/README.md for details.'
 
         unless @app_id
-            @emit 'error', new Error 'The environment variable "FB_APP_ID" is required.'
+            @emit 'error', new Error 'The environment variable "FB_APP_ID" is required. See https://github.com/chen-ye/hubot-fb/blob/master/README.md for details.'
 
         unless @app_secret
-            @emit 'error', new Error 'The environment variable "FB_APP_SECRET" is required.'
+            @emit 'error', new Error 'The environment variable "FB_APP_SECRET" is required. See https://github.com/chen-ye/hubot-fb/blob/master/README.md for details.'
 
-        unless process.env['FB_WEBHOOK']
-            @emit 'error', new Error 'The environment variable "FB_WEBHOOK" is required.'
+        unless process.env['FB_WEBHOOK_BASE']
+            @emit 'error', new Error 'The environment variable "FB_WEBHOOK_BASE" is required. See https://github.com/chen-ye/hubot-fb/blob/master/README.md for details.'
             
         @robot.http(@subscriptionEndpoint)
             .query({access_token:self.token})
