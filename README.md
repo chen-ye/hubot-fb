@@ -1,5 +1,6 @@
 # hubot-fb
-[![npm version](https://badge.fury.io/js/hubot-fb.svg)](https://badge.fury.io/js/hubot-fb)
+[![NPM Version](https://badge.fury.io/js/hubot-fb.svg)](https://badge.fury.io/js/hubot-fb)
+[![Dependency Status](https://david-dm.org/chen-ye/hubot-fb.svg)](https://david-dm.org/chen-ye/hubot-fb)
 
 A [Hubot](https://hubot.github.com) adapter for the [Facebook Messenger Platform](https://messengerplatform.fb.com/). This adapter fully supports everything the v2.6 Messenger platform API is capable of:
 - Token validation and botside autosetup
@@ -8,6 +9,8 @@ A [Hubot](https://hubot.github.com) adapter for the [Facebook Messenger Platform
 - Send templates and images (jpgs; pngs; animated gifs)
 - Receive images, location, and other attachments
 - Template postbacks
+
+[Changelog](/CHANGELOG.md)
 
 ## Installation
 [See detailed installation instructions here.](/INSTALL.md)
