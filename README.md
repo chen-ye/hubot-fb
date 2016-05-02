@@ -12,9 +12,9 @@ A [Hubot](https://hubot.github.com) adapter for the [Facebook Messenger Platform
 ## Installation
 [See detailed installation instructions here.](/INSTALL.md)
 - For setting up a Hubot instance, [see here](https://hubot.github.com/docs/)
+- Create a [Facebook page](https://www.facebook.com/pages/create/) and [App](https://developers.facebook.com/quickstarts/?platform=web) (you can skip Quick Start after you create an App ID and enter your email), or use existing ones.
 - Install hubot-fb into your Hubot instance using by running ```npm install -save hubot-fb``` in your Hubot's root.
-- See [Facebook's quickstart](https://developers.facebook.com/docs/messenger-platform/quickstart) for setup instructions on Facebook's side. In fact, just create a Page, App and get the config variables below; you don't have to setup webhook or subcribe app to page, as they will be done automatically.
-- [Configure](#configuration) hubot-fb.
+- [Configure](#configuration) hubot-fb. Setting up webhooks and subscribing to pages will be done automatically by hubot-fb. (Thanks @kengz!)
 - Set hubot-fb as your adapter by launching with ```bin/hubot -a fb```. (Edit your Procfile to do the same on Heroku.)
 
 
@@ -29,18 +29,18 @@ Required variables are in **bold**.
 
 | config variable           | type    | default   | description                                                                                                                                                                                                                               |
 |---------------------------|---------|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **`FB_PAGE_ID`**   | string  | -         | Your Facebook Page ID. You can find it at `https://www.facebook.com/<your page name>/info?tab=page_info`.                                           |
+| **`FB_PAGE_ID`**   | string  | -         | Your Facebook Page ID. You can find it at `https://www.facebook.com/<YOUR PAGE USERNAME>/info?tab=page_info`.                                           |
 | **`FB_APP_ID`, `FB_APP_SECRET`**   | string  | -         | Your App ID and App Secret. You can find them at `https://developers.facebook.com/apps/`.                                           |
-| **`FB_PAGE_TOKEN`**   | string  | -         | Your [page access token](https://developers.facebook.com/docs/facebook-login/access-tokens#pagetokens). You can get one at `https://developers.facebook.com/apps/[YOUR APP ID]/messenger/`.                                           |
-| **`FB_VERIFY_TOKEN`** | string  | -         | Your [verification token](https://developers.facebook.com/docs/graph-api/webhooks#setup). This is the string your app expects when you modify a webhook subscription at `https://developers.facebook.com/apps/[YOUR APP ID]/webhooks/`. |
-| **`FB_WEBHOOK`**        | string  | - | The url for Facebook webhook subscription. This will be joined with `FB_ROUTE_URL`, e.g. `FB_WEBHOOK=https://mybot.com, FB_ROUTE_URL=/fb`, we will join it into `https://mybot.com/fb`. Note the URL must be `https`.                                                                                                                                                                                        |
-| `FB_ROUTE_URL`        | string  | "/fb" | The webhook route path hubot-fb monitors for new message events.                                                                                                                                                                                         |
-| `FB_AUTOHEAR`        | int  | 0 | Let hubot "hear" even in "respond" mode, i.e. without it's name being mentioned.                                                                                                                                                                                         |
-| `FB_SEND_IMAGES`      | boolean | true      | Whether or not hubot-fb should automatically convert compatible urls into image attachments                                                                                                                                               |
+| **`FB_PAGE_TOKEN`**   | string  | -         | Your [page access token](https://developers.facebook.com/docs/messenger-platform/implementation#page_access_token). You can get one at `https://developers.facebook.com/apps/<YOUR APP ID>/messenger/`.                                           |
+| `FB_VERIFY_TOKEN` | string  | -         | Your [verification token](https://developers.facebook.com/docs/graph-api/webhooks#setup). This is the string your app expects when you modify a webhook subscription at `https://developers.facebook.com/apps/<YOUR APP ID>/webhooks/`. One will be automatically set for you if you do not specify a token. |
+| **`FB_WEBHOOK`**        | string  | - | The url for Facebook webhook subscription. This will be joined with `FB_ROUTE_URL`, e.g. `FB_WEBHOOK=https://mybot.com, FB_ROUTE_URL=/hubot/fb` will be passed to Facebook as `https://mybot.com/hubot/fb`. Note the URL must be `https`.                                                                                                                                                                                        |
+| `FB_ROUTE_URL`        | string  | `/hubot/fb` | The webhook route path hubot-fb monitors for new message events.                                                                                                                                                                                         |
+| `FB_AUTOHEAR`        | boolean  | `false` | Prepend a `@<robot.name>` to all dirrect messages to your robot, so that it'll respond to a direct message even if not explicitly invoked. E.g., for a robot named "hubot", both "ping" and "@hubot ping" will be passed as "@hubot ping" |
+| `FB_SEND_IMAGES`      | boolean | `true`      | Whether or not hubot-fb should automatically convert compatible urls into image attachments                                                                                                                                               |
 
 ## Use
 ### Sending Rich Messages (Templates, Images)
-_Note: If you just want to send images, you can also send a standard image url in your message text with ```FB_SEND_IMAGES``` set to `true`._
+_Note: If you just want to send images, you can also send a standard image url in your message text with `FB_SEND_IMAGES` set to `true`._
 To send rich messages, include in your envelope 
 ``` 
 envelope = 

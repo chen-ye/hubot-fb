@@ -5,7 +5,9 @@ catch
     {Robot,Adapter,TextMessage,User} = prequire 'hubot'
     
 Mime = require 'mime'
+crypto = require 'crypto'
 inspect = require('util').inspect
+
 
 class FBMessenger extends Adapter
 
@@ -17,9 +19,9 @@ class FBMessenger extends Adapter
         @app_secret = process.env['FB_APP_SECRET']
 
         @token      = process.env['FB_PAGE_TOKEN']
-        @vtoken     = process.env['FB_VERIFY_TOKEN'] or 'hubotfbverification'
+        @vtoken     = process.env['FB_VERIFY_TOKEN'] or crypto.randomBytes(16).toString('hex')
         
-        @routeURL   = process.env['FB_ROUTE_URL'] or '/fb'
+        @routeURL   = process.env['FB_ROUTE_URL'] or '/hubot/fb'
         @webhookURL = process.env['FB_WEBHOOK'] + @routeURL
 
         _sendImages = process.env['FB_SEND_IMAGES']
@@ -27,12 +29,13 @@ class FBMessenger extends Adapter
             @sendImages = true
         else
             @sendImages = _sendImages is 'true'
+            
+        @autoHear = process.env['FB_AUTOHEAR'] is 'true'
         
         @apiURL = 'https://graph.facebook.com/v2.6'
         @pageURL = @apiURL + '/'+ @page_id
         @messageEndpoint = @pageURL + '/messages?access_token=' + @token
         @subscriptionEndpoint = @pageURL + '/subscribed_apps?access_token=' + @token
-        @userProfileEndpoint = @pageURL + '/subscribed_apps?access_token=' + @token
         @appAccessTokenEndpoint = 'https://graph.facebook.com/oauth/access_token?client_id=' + @app_id + '&client_secret=' + @app_secret + '&grant_type=client_credentials'
         @setWebhookEndpoint = @pageURL + '/subscriptions'
         
@@ -129,7 +132,7 @@ class FBMessenger extends Adapter
 
     cleanMessageText: (text, chat_id) ->
         # if AUTOHEAR is not turned on, don't clean
-        if !process.env['FB_AUTOHEAR']
+        if !@autoHear
             return text
         
         # If it is a private chat, automatically prepend the bot name if it does not exist already.
@@ -190,13 +193,10 @@ class FBMessenger extends Adapter
         self = @
         
         unless @token
-            @emit 'error', new Error 'The environment variable "FB_PAGE_TOKEN" is required.'
-            
-        unless @vtoken
-            @emit 'error', new Error 'The environment variable "FB_VERIFY_TOKEN" is required.'
+            @emit 'error', new Error 'The environment variable "FB_PAGE_TOKEN" is required. See https://github.com/chen-ye/hubot-fb/blob/master/README.md for details.'
 
         unless @page_id
-            @emit 'error', new Error 'The environment variable "FB_PAGE_ID" is required.'
+            @emit 'error', new Error 'The environment variable "FB_PAGE_ID" is required. '
 
         unless @app_id
             @emit 'error', new Error 'The environment variable "FB_APP_ID" is required.'
@@ -210,7 +210,7 @@ class FBMessenger extends Adapter
         @robot.http(@subscriptionEndpoint)
             .query({access_token:self.token})
             .post() (error, response, body) -> 
-                self.robot.logger.info "subcribed app to page: " + body
+                self.robot.logger.info "subscribed app to page: " + body
         
         @robot.router.get [@routeURL], (req, res) ->
             if req.param('hub.mode') == 'subscribe' and req.param('hub.verify_token') == self.vtoken
