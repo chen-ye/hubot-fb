@@ -125,26 +125,18 @@ class FBMessenger extends Adapter
             @robot.emit "fb_richMsg", envelope
             @_processAttachment event, envelope, attachment for attachment in envelope.attachments
         if event.message.text?
-            text = @cleanMessageText event.message.text, envelope.room
+            text = if @autoHear then @_autoHear event.message.text, envelope.room else event.message.text
             msg = new TextMessage envelope.user, text, event.message.mid
             @receive msg
             @robot.logger.info "Reply message to room/message: " + envelope.user.name + "/" + event.message.mid
 
-    cleanMessageText: (text, chat_id) ->
-        # if AUTOHEAR is not turned on, don't clean
-        if !@autoHear
-            return text
-        
+    _autoHear: (text, chat_id) ->        
         # If it is a private chat, automatically prepend the bot name if it does not exist already.
         if (chat_id > 0)
             # Strip out the stuff we don't need.
-            text = text.replace(/^\//g, '').trim()
-
             text = text.replace(new RegExp('^@?' + @robot.name.toLowerCase(), 'gi'), '');
             text = text.replace(new RegExp('^@?' + @robot.alias.toLowerCase(), 'gi'), '') if @robot.alias
-            text = @robot.name + ' ' + text.trim()
-        else
-            text = text.trim()
+            text = @robot.name + ' ' + text
 
         return text
             
