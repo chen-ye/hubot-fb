@@ -117,6 +117,8 @@ class FBMessenger extends Adapter
             @_processPostback event, envelope
         else if event.delivery?
             @_processDelivery event, envelope
+        else if event.optin?
+            @_processOptin event, envelope
             
     _processMessage: (event, envelope) ->
         @robot.logger.debug inspect event.message
@@ -155,6 +157,11 @@ class FBMessenger extends Adapter
         
     _processDelivery: (event, envelope) ->
         @robot.emit "fb_delivery", envelope
+    
+    _processOptin: (event, envelope) ->
+        envelope.ref = event.optin.ref
+        @robot.emit "fb_optin", envelope
+        @robot.emit "fb_authentication", envelope
         
     _getUser: (userId, page, callback) ->
         self = @

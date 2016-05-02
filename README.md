@@ -96,6 +96,7 @@ Register a listener using `robot.on [EVENT_NAME] [CALLBACK]`.
 | `fb_delivery`                  | ```{ event: msgevent, user: hubot.user, room: string }```                               | Emitted when a delivery confirmation is sent.                                                                                                                              |
 | `fb_richMsg`                   | ```{ event: msgevent, user: hubot.user, room: string, attachments: array[msgevent.message.attachment]}```          | Emitted when a message with an attachment is sent. Contains all attachments within that message.                                                                           |
 | `fb_richMsg_[ATTACHMENT.TYPE]` | ```{ event: msgevent, user: hubot.user, room: string, attachment: msgevent.message.attachment}```          | Emitted when a message with an attachment is sent. Contains a single attachment of type [ATTACHMENT.TYPE], and multiple are emitted in messages with multiple attachments. |
+| `fb_optin` or `fb_authentication` | ``` { event: msgevent, user: hubot.user, room: string, ref: string } ``` | Emitted when an [authentication event](https://developers.facebook.com/docs/messenger-platform/plugin-reference#send_to_messenger) is triggered
 
 #### `fb_postback` example
 
