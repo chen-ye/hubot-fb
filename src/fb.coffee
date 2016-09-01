@@ -41,6 +41,8 @@ class FBMessenger extends Adapter
 
         @msg_maxlength = 320
 
+        @_dataQueue = []
+
     send: (envelope, strings...) ->
         @_sendText envelope.user.id, msg for msg in strings
         if envelope.fb?.richMsg?
@@ -72,14 +74,24 @@ class FBMessenger extends Adapter
         @_sendAPI data
 
     _sendAPI: (data) ->
-        self = @
+      @_dataQueue.push data
+      if @_dataQueue.length == 1
+          # Nothing else is queued up, so initiate the API request
+          @_sendData()
 
-        data = JSON.stringify(data)
+    _sendData: () ->
+        self = @
+        data = @_dataQueue[0]
+        return unless data
 
         @robot.http(@messageEndpoint)
             .query({access_token:self.token})
             .header('Content-Type', 'application/json')
-            .post(data) (error, response, body) ->
+            .post(JSON.stringify(data)) (error, response, body) ->
+                self._dataQueue.shift()
+                # If there are other items in the queue, send them
+                if self._dataQueue.length > 0
+                  self._sendData()
                 if error
                     self.robot.logger.error 'Error sending message: #{error}'
                     return
