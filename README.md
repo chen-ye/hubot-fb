@@ -44,9 +44,9 @@ Required variables are in **bold**.
 ## Use
 ### Sending Rich Messages (Templates, Images)
 _Note: If you just want to send images, you can also send a standard image url in your message text with `FB_SEND_IMAGES` set to `true`._
-To send rich messages, include in your envelope 
-``` 
-envelope = 
+To send rich messages, include in your envelope
+```
+envelope =
 {
     fb: {
         richMsg: [RICH_MESSAGE]
@@ -57,7 +57,7 @@ envelope =
 
 In a response, this would look something like:
 
-```
+```coffeescript
 robot.hear /getting chilly/i, (res) ->
     res.envelope.fb = {
       richMsg: {
@@ -85,11 +85,39 @@ robot.hear /getting chilly/i, (res) ->
     res.send()
 ```
 
+### Emitting a Rich Message
+As an alternative to the above, one can emit a message
+```coffeescript
+robot.hear /getting chilly/i, (res) ->
+    robot.emit "fb.message",
+      envelope: res.envelope
+      message: {
+        attachment: {
+          type: "template",
+          payload: {
+            template_type: "button",
+            text: "Do you wanna build a snowman?",
+            buttons: [
+              {
+                type: "web_url",
+                url: "http://www.dailymotion.com/video/x1fa7w8_frozen-do-you-wanna-build-the-snowman-1080p-official-hd-music-video_music",
+                title: "Yes"
+              },
+              {
+                type: "web_url",
+                title: "No",
+                url: "http://wallpaper.ultradownloads.com.br/275633_Papel-de-Parede-Meme-Okay-Face_1600x1200.jpg"
+              }
+            ]
+          }
+        }
+      }
+```
 
 See Facebook's API reference [here](https://developers.facebook.com/docs/messenger-platform/send-api-reference#guidelines) for further examples of rich messages.
 
 ### Events
-Events allow you react to input that Hubot doesn't natively support. This adapter emits `fb_postback`, `fb_delivery`, `fb_richMsg`, and `fb_richMsg_[ATTACHMENT_TYPE]` events. 
+Events allow you react to input that Hubot doesn't natively support. This adapter emits `fb_postback`, `fb_delivery`, `fb_richMsg`, and `fb_richMsg_[ATTACHMENT_TYPE]` events.
 
 Register a listener using `robot.on [EVENT_NAME] [CALLBACK]`.
 
@@ -112,7 +140,7 @@ Responding to an event is a bit more manual—here's an example.
 module.exports = (robot) ->
 
   # This can exist alongside your other hooks
-  robot.on "fb_postback", (envelope) -> 
+  robot.on "fb_postback", (envelope) ->
     res = new Response robot, envelope, undefined
     if envelope.payload is "send_ok_face"
       res.send "http://wallpaper.ultradownloads.com.br/275633_Papel-de-Parede-Meme-Okay-Face_1600x1200.jpg"
