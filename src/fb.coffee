@@ -253,6 +253,14 @@ class FBMessenger extends Adapter
         @robot.logger.info "FB-adapter initialized"
         @emit "connected"
 
+        @robot.on 'fb.message', (payload) =>
+            data = {
+                recipient: {
+                  id: payload.envelope.user.id
+                },
+                message: payload.message
+            }
+            @_sendAPI data
 
 exports.use = (robot) ->
     new FBMessenger robot
