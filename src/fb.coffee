@@ -124,7 +124,10 @@ class FBMessenger extends Adapter
         }
 
         if event.message?
-            @_processMessage event, envelope
+            if event.message?.quick_reply?
+                @_processQuickReply event, envelope
+            else
+                @_processMessage event, envelope
         else if event.postback?
             @_processPostback event, envelope
         else if event.delivery?
@@ -162,6 +165,10 @@ class FBMessenger extends Adapter
             attachment: attachment
         }
         @robot.emit "fb_richMsg_#{attachment.type}", unique_envelope
+
+    _processQuickReply: (event, envelope) ->
+        envelope.payload = event.message.quick_reply.payload
+        @robot.emit "fb_postback", envelope
 
     _processPostback: (event, envelope) ->
         envelope.payload = event.postback.payload
