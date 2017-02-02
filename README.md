@@ -1,7 +1,7 @@
 # hubot-fb-platform
 
 [![NPM Version](https://badge.fury.io/js/hubot-fb.svg)](https://badge.fury.io/js/hubot-fb-platform)
-[![Dependency Status](https://david-dm.org/DKByo/hubot-fb.svg)](https://david-dm.org/chen-ye/hubot-fb-platform)
+[![Dependency Status](https://david-dm.org/DKByo/hubot-fb.svg)](https://david-dm.org/DKByo/hubot-fb-platform)
 
 A [Hubot](https://hubot.github.com) adapter for the [Facebook Messenger Platform](https://messengerplatform.fb.com/). This adapter fully supports everything the v2.6 Messenger platform API is capable of:
 - Token validation and botside autosetup
